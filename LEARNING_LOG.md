@@ -6,7 +6,7 @@ verify, honest about what's still in progress, no padding.
  
 ---
  
-## 2026-11-23 — Access control, start to finish
+## Access control, start to finish
  
 I just closed out PortSwigger's Web Security Academy **Access Control**
 track — all 13 labs, apprentice through expert. That topic ended up being
