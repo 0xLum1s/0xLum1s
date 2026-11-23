@@ -6,7 +6,7 @@ verify, honest about what's still in progress, no padding.
  
 ---
  
-## Access control, start to finish
+## Three PortSwigger tracks down: Access Control, Business Logic, Authentication
  
 I just closed out PortSwigger's Web Security Academy **Access Control**
 track — all 13 labs, apprentice through expert. That topic ended up being
@@ -37,6 +37,53 @@ None of these are exotic. That's the point — this is what the inside of
 most real broken-access-control reports looks like, not a novel parser
 bug. It's exactly the category OWASP has ranked #1 on the Web Top Ten
 since 2021, and exactly why it's where I'm starting.
+ 
+Same session, two more tracks closed out:
+ 
+**Business Logic Vulnerabilities — 11/11 labs.** This is the track that
+doesn't map cleanly to a CWE or a payload list, which is exactly why it's
+valuable. A few that changed how I think about testing:
+ 
+- **Excessive trust in client-side controls** — a flow that assumes a
+  price, a discount, or a step order the client reported is the same one
+  the server should act on. The fix pattern is always the same: recompute
+  it server-side, don't just echo back what the request claimed.
+- **High-level and low-level logic flaws** — the distinction stuck with me:
+  a low-level flaw lives in one function's assumptions (an off-by-one in
+  how a discount stacks), a high-level one lives in the *design* of the
+  workflow itself (nothing technically malformed about any single request,
+  the sequence of allowed actions is just wrong).
+- **Infinite money logic flaw** — the one that makes the stakes obvious to
+  anyone outside security: a flow that can be looped past its intended
+  limit isn't a cosmetic bug, it's a direct financial one.
+- **Authentication bypass via flawed state machine / via encryption
+  oracle** — both are really the same insight as the multi-step
+  access-control gap above, just with "state" meaning something more
+  implicit (an encrypted token being reusable in a context it was never
+  meant for, or a login flow's state machine having a path nobody
+  intended to leave open).
+**Authentication — 14/14 labs.** Less conceptually novel than the logic
+track, but this is where a lot of real severity actually lives because
+auth bugs are so often the first domino:
+ 
+- **Username enumeration via response differences** and **brute-force via
+  the password-change flow rather than login** — the lesson in both: rate
+  limiting and lockouts tend to get applied to the "obvious" endpoint
+  (login) and forgotten everywhere else credentials get checked.
+- **2FA bypass** and **password-reset-poisoning via middleware** — both
+  are trust-boundary bugs wearing an authentication costume: something
+  downstream trusted a header or a flow state that an earlier layer never
+  actually guaranteed.
+- **Offline password cracking** — a reminder that "we hash passwords" is
+  not the same claim as "our hashing makes offline cracking impractical";
+  the algorithm and cost factor are the actual claim being made.
+I'm not going to inflate this into "OWASP Top 10 done" — it isn't.
+Injection (SQL injection alone is 18 labs on its own), SSRF, XXE, SSTI,
+insecure deserialization, and the client-side half of the Academy (XSS,
+CSRF, CORS, DOM-based) are all still ahead of me. What's actually true as
+of today: three tracks, 38 labs, all of them in the authorization/
+authentication/business-logic cluster — which is also, not coincidentally,
+the exact cluster my API specialization lives in.
  
 **What this connects to:** I'd already been writing up my own notes on
 IDOR/BOLA and broken access control before this (a field-manual document
